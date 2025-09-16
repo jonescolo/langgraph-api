@@ -1,26 +1,29 @@
+
+
 import os
 import uvicorn
+from io import BytesIO
 from fastapi import FastAPI, Request, File, UploadFile
 import pandas as pd
 
 app = FastAPI()
 
-# Existing endpoint for JSON payloads from Excel VBA
+# Root route for Render health check
+@app.get("/")
+def read_root():
+    return {"status": "ok", "message": "LangGraph API is running"}
+
+# Endpoint for JSON payloads from Excel VBA
 @app.post("/excel-trigger")
 async def handle_excel(request: Request):
     data = await request.json()
     return {"status": "success", "received": data}
 
-# New endpoint for spreadsheet upload and analysis
+# Endpoint for spreadsheet upload and analysis
 @app.post("/upload-excel")
 async def upload_excel(file: UploadFile = File(...)):
     contents = await file.read()
-from io import BytesIO
-
-@app.post("/upload-excel")
-async def upload_excel(file: UploadFile = File(...)):
-    contents = await file.read()
-    df = pd.read_excel(BytesIO(contents))  # ✅ Fix here
+    df = pd.read_excel(BytesIO(contents))
 
     def classify_columns(df):
         result = {}
@@ -41,7 +44,11 @@ async def upload_excel(file: UploadFile = File(...)):
         "classification": classifications
     }
 
-# Entry point for local testing (optional on Render)
+# Entry point for local testing
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
+
+
+
+
