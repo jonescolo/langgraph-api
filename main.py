@@ -15,9 +15,13 @@ async def handle_excel(request: Request):
 @app.post("/upload-excel")
 async def upload_excel(file: UploadFile = File(...)):
     contents = await file.read()
-    df = pd.read_excel(contents)
+from io import BytesIO
 
-    # Column classification logic
+@app.post("/upload-excel")
+async def upload_excel(file: UploadFile = File(...)):
+    contents = await file.read()
+    df = pd.read_excel(BytesIO(contents))  # ✅ Fix here
+
     def classify_columns(df):
         result = {}
         for col in df.columns:
