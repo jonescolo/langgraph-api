@@ -1,6 +1,3 @@
-# Updated on 2025-09-18 to confirm Git sync
-
-
 import pandas as pd
 from typing import Dict, Any, List
 
@@ -30,13 +27,17 @@ def classify_sheet_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
 
     df = pd.DataFrame(data)
 
-    # Coerce numeric and datetime types
+    # Coerce numeric and datetime types safely
     for col in df.columns:
-        df[col] = pd.to_numeric(df[col], errors="ignore")
+        try:
+            df[col] = pd.to_numeric(df[col])
+        except Exception:
+            pass
+
         if df[col].dtype == "object":
             try:
-                df[col] = pd.to_datetime(df[col], errors="raise")
-            except:
+                df[col] = pd.to_datetime(df[col], format="%Y-%m-%d", errors="raise")
+            except Exception:
                 pass
 
     results: List[Dict[str, Any]] = []
@@ -71,7 +72,8 @@ def classify_sheet_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
             base_row["value_counts"] = ""
             results.append(base_row)
 
-    results.sort(key=lambda x: x["classification"])
+    # Sort by column name to group metadata above value counts
+    results.sort(key=lambda x: x["column"] or "~")
 
     return {
         "dependent_variable": dependent,
