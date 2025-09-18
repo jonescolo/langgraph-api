@@ -1,9 +1,10 @@
 {
-  "dependent_variable": "SalePrice",
-  "data": {
-    "SalePrice": [250000, 275000, 300000],
-    "LotSize": [0.25, 0.3, 0.35],
-    "Condition": ["Good", "Fair", "Good"],
-    "Garage": [1, 0, 1]
-  }
+    "dependent_variable": "SSF",
+    "data": {
+        "SSF": [100, 200, 150, 175, 180],
+        "Condition": ["Good", "Fair", "Fair", "Average", "Good"],
+        "Quality": ["A", "B", "B", "A", "C"],
+        "SquareFeet": [1200, 1500, 1300, 1400, 1600],
+        "SalePrice": [300000, 350000, 320000, 330000, 360000]
+    }
 }
