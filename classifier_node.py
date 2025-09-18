@@ -11,7 +11,7 @@ def classify_column(series: pd.Series) -> str:
     if dtype == "object":
         return "categorical (nominal)"
     elif dtype in ["int64", "float64"]:
-        if unique_vals <= 10 and series.dropna().is_monotonic_increasing:
+        if unique_vals <= 10:
             return "categorical (ordinal)"
         else:
             return "continuous"
