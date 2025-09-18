@@ -1,54 +1,54 @@
-
-
 import os
-import uvicorn
 from io import BytesIO
 from fastapi import FastAPI, Request, File, UploadFile
+from fastapi.responses import JSONResponse
 import pandas as pd
+from typing import Dict, Any
 
 app = FastAPI()
 
-# Root route for Render health check
+# 🔹 Health check route for Render
 @app.get("/")
-def read_root():
+def read_root() -> Dict[str, str]:
     return {"status": "ok", "message": "LangGraph API is running"}
 
-# Endpoint for JSON payloads from Excel VBA
+# 🔹 JSON payload endpoint (e.g. Excel VBA trigger)
 @app.post("/excel-trigger")
-async def handle_excel(request: Request):
+async def handle_excel(request: Request) -> Dict[str, Any]:
     data = await request.json()
     return {"status": "success", "received": data}
 
-# Endpoint for spreadsheet upload and analysis
+# 🔹 Spreadsheet upload and classification
 @app.post("/upload-excel")
-async def upload_excel(file: UploadFile = File(...)):
+async def upload_excel(file: UploadFile = File(...)) -> Dict[str, Any]:
     contents = await file.read()
     df = pd.read_excel(BytesIO(contents))
-
-    def classify_columns(df):
-        result = {}
-        for col in df.columns:
-            unique_vals = df[col].dropna().unique()
-            if df[col].dtype == 'object':
-                result[col] = 'binary' if len(unique_vals) == 2 else 'categorical'
-            elif df[col].dtype in ['int64', 'float64']:
-                result[col] = 'continuous'
-            else:
-                result[col] = 'unknown'
-        return result
-
     classifications = classify_columns(df)
+
     return {
         "columns": df.columns.tolist(),
         "shape": df.shape,
         "classification": classifications
     }
 
-# Entry point for local testing
+# 🔹 Column classification logic
+def classify_columns(df: pd.DataFrame) -> Dict[str, str]:
+    result = {}
+    for col in df.columns:
+        unique_vals = df[col].dropna().unique()
+        dtype = df[col].dtype
+
+        if dtype == 'object':
+            result[col] = 'binary' if len(unique_vals) == 2 else 'categorical'
+        elif dtype.kind in {'i', 'f'}:  # int or float
+            result[col] = 'continuous'
+        else:
+            result[col] = 'unknown'
+
+    return result
+
+# 🔹 Local testing entry point
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
+    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=port)
-
-
-
-
