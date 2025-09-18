@@ -2,6 +2,9 @@ import pandas as pd
 from typing import Dict, Any, List
 
 def classify_column(series: pd.Series) -> str:
+    if pd.api.types.is_datetime64_any_dtype(series):
+        return "temporal"
+
     dtype = str(series.dtype)
     unique_vals = series.nunique()
 
@@ -24,9 +27,14 @@ def classify_sheet_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
 
     df = pd.DataFrame(data)
 
-    # Coerce numeric types where possible
+    # Coerce numeric and datetime types
     for col in df.columns:
         df[col] = pd.to_numeric(df[col], errors="ignore")
+        if df[col].dtype == "object":
+            try:
+                df[col] = pd.to_datetime(df[col], errors="raise")
+            except:
+                pass
 
     results: List[Dict[str, Any]] = []
     for col in df.columns:
@@ -34,9 +42,11 @@ def classify_sheet_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
             continue
 
         classification = classify_column(df[col])
+        dtype_label = "datetime" if pd.api.types.is_datetime64_any_dtype(df[col]) else str(df[col].dtype)
+
         base_row = {
             "column": col,
-            "dtype": str(df[col].dtype),
+            "dtype": dtype_label,
             "unique_values": int(df[col].nunique()),
             "missing_values": int(df[col].isna().sum()),
             "classification": classification
