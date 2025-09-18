@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Classifier Output</title>
+    <style>
+        body { font-family: Arial; margin: 2em; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 2em; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+        th { background-color: #f2f2f2; }
+        .value-count { background-color: #f9f9f9; padding-left: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Formatted Classifier Output</h2>
+    {% for col in columns %}
+        <table>
+            <tr><th colspan="2">{{ col.name }}</th></tr>
+            <tr><td>Dtype</td><td>{{ col.dtype }}</td></tr>
+            <tr><td>Unique Values</td><td>{{ col.unique_values }}</td></tr>
+            <tr><td>Missing Values</td><td>{{ col.missing_values }}</td></tr>
+            <tr><td>Classification</td><td>{{ col.classification }}</td></tr>
+            <tr><td>Type</td><td>{{ col.type }}</td></tr>
+            <tr><td colspan="2"><strong>Value Counts</strong></td></tr>
+            {% for val in col.value_counts %}
+                <tr><td colspan="2" class="value-count">{{ val }}</td></tr>
+            {% endfor %}
+        </table>
+    {% endfor %}
+</body>
+</html>

@@ -1,34 +1,20 @@
-def format_classifier_output(payload):
-    raw = payload.get("independent_variables", [])
-    grouped = {}
-    current = None
+def format_classifier_output(payload: dict) -> dict:
+    columns = []
+    current_column = None
 
-    for item in raw:
-        if "column" in item and item["column"]:
-            current = item["column"]
-            grouped[current] = {
-                "name": current,
+    for item in payload.get("independent_variables", []):
+        if "column" in item:
+            current_column = {
+                "name": item["column"],
                 "dtype": item.get("dtype", ""),
                 "unique_values": item.get("unique_values", 0),
                 "missing_values": item.get("missing_values", 0),
                 "classification": item.get("classification", ""),
-                "type": infer_type(current),
+                "type": item.get("type", "general"),
                 "value_counts": []
             }
-        elif "value_counts" in item and current:
-            grouped[current]["value_counts"].append(item["value_counts"])
+            columns.append(current_column)
+        elif "value_counts" in item and current_column:
+            current_column["value_counts"].append(item["value_counts"])
 
-    return {"columns": list(grouped.values())}
-
-def infer_type(col_name):
-    col_name = col_name.lower()
-    if "date" in col_name:
-        return "date"
-    elif "price" in col_name or "amount" in col_name:
-        return "currency"
-    elif "sqft" in col_name or "squarefeet" in col_name:
-        return "area"
-    elif "year" in col_name:
-        return "year"
-    else:
-        return "general"
+    return {"columns": columns}

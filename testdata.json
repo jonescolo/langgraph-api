@@ -1,10 +1,58 @@
 {
-    "dependent_variable": "SSF",
-    "data": {
-        "SSF": [100, 200, 150, 175, 180],
-        "Condition": ["Good", "Fair", "Fair", "Average", "Good"],
-        "Quality": ["A", "B", "B", "A", "C"],
-        "SquareFeet": [1200, 1500, 1300, 1400, 1600],
-        "SalePrice": [300000, 350000, 320000, 330000, 360000]
+  "independent_variables": [
+    {
+      "column": "Condition",
+      "dtype": "object",
+      "unique_values": 3,
+      "missing_values": 0,
+      "classification": "categorical (nominal)"
+    },
+    {
+      "value_counts": "2 \"Fair\""
+    },
+    {
+      "value_counts": "2 \"Good\""
+    },
+    {
+      "value_counts": "1 \"Average\""
+    },
+    {
+      "column": "Quality",
+      "dtype": "object",
+      "unique_values": 3,
+      "missing_values": 0,
+      "classification": "categorical (ordinal)"
+    },
+    {
+      "value_counts": "2 \"B\""
+    },
+    {
+      "value_counts": "2 \"A\""
+    },
+    {
+      "value_counts": "1 \"C\""
+    },
+    {
+      "column": "SquareFeet",
+      "dtype": "int",
+      "unique_values": 5,
+      "missing_values": 0,
+      "classification": "numerical (continuous)"
+    },
+    {
+      "value_counts": "1 1200"
+    },
+    {
+      "value_counts": "1 1500"
+    },
+    {
+      "value_counts": "1 1300"
+    },
+    {
+      "value_counts": "1 1400"
+    },
+    {
+      "value_counts": "1 1600"
     }
+  ]
 }
