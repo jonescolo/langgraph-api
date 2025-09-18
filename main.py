@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request, File, UploadFile
 from fastapi.responses import JSONResponse
 import pandas as pd
 from typing import Dict, Any
+from classifier_node import classify_sheet_payload  # Modular import
 
 app = FastAPI()
 
@@ -31,7 +32,14 @@ async def upload_excel(file: UploadFile = File(...)) -> Dict[str, Any]:
         "classification": classifications
     }
 
-# 🔹 Column classification logic
+# 🔹 Direct JSON classification endpoint (LangGraph/n8n/Excel VBA)
+@app.post("/classify-variables-json")
+async def classify_json(request: Request) -> JSONResponse:
+    payload = await request.json()
+    result = classify_sheet_payload(payload)
+    return JSONResponse(content=result)
+
+# 🔹 Inline fallback classifier (used by /upload-excel)
 def classify_columns(df: pd.DataFrame) -> Dict[str, str]:
     result = {}
     for col in df.columns:
@@ -40,7 +48,7 @@ def classify_columns(df: pd.DataFrame) -> Dict[str, str]:
 
         if dtype == 'object':
             result[col] = 'binary' if len(unique_vals) == 2 else 'categorical'
-        elif dtype.kind in {'i', 'f'}:  # int or float
+        elif dtype.kind in {'i', 'f'}:
             result[col] = 'continuous'
         else:
             result[col] = 'unknown'
