@@ -52,18 +52,18 @@ def classify_sheet_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
             "classification": classification
         }
 
-        if classification.startswith("categorical"):
-            value_counts = df[col].value_counts(dropna=True)
-            for idx, (label, count) in enumerate(value_counts.items()):
-                row = base_row.copy() if idx == 0 else {
-                    "column": "",
-                    "dtype": "",
-                    "unique_values": "",
-                    "missing_values": "",
-                    "classification": ""
-                }
-                row["value_counts"] = f'{count} "{label}"'
-                results.append(row)
+	if classification.startswith("categorical"):
+    	value_counts = df[col].value_counts(dropna=True)
+    	for idx, (label, count) in enumerate(value_counts.items()):
+        row = base_row.copy() if idx == 0 else {
+            "column": "",
+            "dtype": "",
+            "unique_values": "",
+            "missing_values": "",
+            "classification": ""
+        }
+        row["value_counts"] = f'{count} "{label}"'
+        results.append(row)
         else:
             base_row["value_counts"] = ""
             results.append(base_row)
