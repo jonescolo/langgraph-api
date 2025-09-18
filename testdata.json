@@ -1,0 +1,9 @@
+{
+  "dependent_variable": "SalePrice",
+  "data": {
+    "SalePrice": [250000, 275000, 300000],
+    "LotSize": [0.25, 0.3, 0.35],
+    "Condition": ["Good", "Fair", "Good"],
+    "Garage": [1, 0, 1]
+  }
+}
