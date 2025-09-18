@@ -7,6 +7,10 @@ import json
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
+@app.get("/ping")
+def ping():
+    return {"status": "ok"}
+
 @app.get("/view_results", response_class=HTMLResponse)
 def view_results(request: Request, payload: str = ""):
     if not payload:
